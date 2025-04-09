@@ -2,13 +2,14 @@ import { Hono } from 'hono'
 import { z } from 'zod' 
 import { zValidator } from '@hono/zod-validator'
 
+
+// type for type safety
 type Expense = {
     id: number
     title: string
     amount: number
 }
 
-// type for type safety
 const fakeExpenses: Expense[] = [
     { id: 1, title: 'Groceries', amount: 50 },
     { id: 2, title: 'Rent', amount: 1200 },
