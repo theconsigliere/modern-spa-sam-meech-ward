@@ -37,7 +37,12 @@ export const expensesRoute = new Hono()
         c.status(201)
         return c.json(expense)
     })
-    // dnyamic path param, use regex to check if id is a number
+    // get total spent set to endpoint
+    .get('/total-spent', (c) => {
+        const total = fakeExpenses.reduce((acc, expense) => acc + expense.amount, 0)
+        return c.json({ total })
+    })
+    // dynamic path param, use regex to check if id is a number
     .get("/:id{[0-9]+}", (c) => {
         const id = Number.parseInt(c.req.param('id'))
         const expense = fakeExpenses.find((e) => e.id === id)

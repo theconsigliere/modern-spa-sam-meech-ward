@@ -1,23 +1,38 @@
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from 'react'
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+import { api } from "@/lib/api"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [totalSpent, setTotalSpent] = useState(0)
+
+  // grab the total spent from the backend
+  useEffect(() => {
+    async function fetchTotalSpent() {
+      // using hono rpc client to fetch the total spent completely type safe from backend to frontend
+      const response = await api.expenses['total-spent'].$get()
+      const data = await response.json()
+      setTotalSpent(data.total)
+    }
+    fetchTotalSpent()
+  },[])
 
   return (
     <>
-      <div className="card">
-        <Button onClick={() => setCount((count) => count + 1)}>
-          Up
-        </Button>
-        <Button onClick={() => setCount((count) => count - 1)}>
-          Down
-        </Button>
-        <p>
-          {count}
-        </p>
-      </div>
+      <Card className="w-[350px] m-auto">
+        <CardHeader>
+          <CardTitle>Total Spent</CardTitle>
+          <CardDescription>Total amount</CardDescription>
+        </CardHeader>
+        <CardContent>{totalSpent}</CardContent>
+      </Card>
     </>
   )
 }
