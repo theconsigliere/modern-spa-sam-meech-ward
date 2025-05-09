@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-
 import {
   Card,
   CardContent,
@@ -8,21 +6,19 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
 
-function App() {
-  const [totalSpent, setTotalSpent] = useState(0)
+async function getTotalSpent() {
+  const result = await api.expenses['total-spent'].$get()
+  if (!result.ok) throw new Error('server error')
+  const data = await result.json()
+  return data
+}
 
-  // grab the total spent from the backend
-  useEffect(() => {
-    async function fetchTotalSpent() {
-      // using hono rpc client to fetch the total spent completely type safe from backend to frontend
-      const response = await api.expenses['total-spent'].$get()
-      const data = await response.json()
-      setTotalSpent(data.total)
-    }
-    fetchTotalSpent()
-  },[])
+function App() {
+  const {isPending, error, data} = useQuery({ queryKey: ['get-total-spent'], queryFn: getTotalSpent })
+  if (error) return 'Error: ' + error.message
 
   return (
     <>
@@ -31,7 +27,7 @@ function App() {
           <CardTitle>Total Spent</CardTitle>
           <CardDescription>Total amount</CardDescription>
         </CardHeader>
-        <CardContent>{totalSpent}</CardContent>
+        <CardContent>{isPending ? "..." : data.total}</CardContent>
       </Card>
     </>
   )
