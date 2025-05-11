@@ -16,9 +16,8 @@ export const Route = createFileRoute('/')({
   
 async function getTotalSpent() {
     const result = await api.expenses['total-spent'].$get()
-
-    console.log(result)
     if (!result.ok) throw new Error('server error')
+        
     const data = await result.json()
     return data
 }
